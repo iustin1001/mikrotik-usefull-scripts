@@ -1,0 +1,28 @@
+#Define global vars
+:global year [:pick [/system clock get date] 0 4]
+:global month [:pick [/system clock get date] 5 7]
+:global day [:pick [/system clock get date] 8 10]
+:global filename ("backup-" . $year . "_" . $month . "_" . $day . ".backup")
+:global backupFilePath ("/backups/" . $filename)
+:global nrOfBackups 7
+
+#creating backup
+/system backup save name=$backupFilePath 
+:delay 2s ;
+#list all backups
+:local files [/file find name~"backup-"]
+#if nr of backups will exceed nr from global variable, then delte the first one
+:local counter 0
+:for element from=([:len $files] - 1) to=0 step=-1 do={
+    :set counter ($counter + 1)
+    :local fileID [:pick $files $element]
+    :local fileName [/file get $fileID name]
+     
+    :if ($counter > $nrOfBackups ) do={
+         /file remove $fileName 
+     } 
+}
+
+
+
+
