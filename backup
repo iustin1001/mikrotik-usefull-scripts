@@ -1,3 +1,5 @@
+#THIS SCRIPT WILL CREATE A BACKUP ON THE DEVICE AND UPLOAD TO SFTP SERVER.
+#ON THE DEVICE WILL REMINE ONLY LAT 7 BACKUPS
 #Define global vars
 :global year [:pick [/system clock get date] 0 4]
 :global month [:pick [/system clock get date] 5 7]
@@ -23,6 +25,8 @@
      } 
 }
 
+#Upload the backup to a sftp server
+/tool fetch address=ip src-path="$backupFilePath"  user=user password=password mode=sftp upload=yes dst-path="/mikrotik/$filename"
 
 
 
