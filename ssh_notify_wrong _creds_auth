@@ -1,0 +1,19 @@
+#Check for the logs with wrong auth creentials to ssh and send notification to telegram
+
+:global tgBotToken "Enter here your telegram bot token"
+:global tgChatID "enter chat ID"
+
+:local logs [/log find where topics~"system" && topics~"error" && topics~"critical"]
+
+:foreach LOG in=$logs do={
+    :local pastTime ([/system clock get time] - 10m)
+    :local eventTime [log get $LOG time]
+    :local Tmessage [log get $LOG message]
+
+    :if ($eventTime > $pastTime) do={
+        /tool fetch url="https://api.telegram.org/bot$tgBotToken/sendMessage" \
+        mode=https \
+        http-method=post \
+        http-data=("chat_id=" . $tgChatID . "&text=" . $Tmessage)
+    }
+}
